@@ -3,6 +3,8 @@
 namespace GameModel\Model;
 
 
+use GameModel\Dto\LayoutDto;
+use GameModel\Dto\MatchesDto;
 use Generator;
 
 class Game
@@ -55,16 +57,15 @@ class Game
   private const REEL_LENGTH = 21;
   private const ROWS = 3;
 
-  protected $reels = [];
-  /**
-   * @var Line[]
-   */
-  private $lines = [];
+  private $reels = [];
   private $maxId;
   private $id;
+  private $matchChecker;
 
-  public function __construct()
+  public function __construct(MatchCheckerInterface $matchChecker)
   {
+    $this->matchChecker = $matchChecker;
+
     $ranges = [];
 
     for ($i = 0; $i < self::REEL_COUNT; $i++) {
@@ -74,7 +75,6 @@ class Game
     $this->maxId = $ranges[self::REEL_COUNT - 1] - 1;
 
     $this->generateReels();
-    $this->generateLines();
     $this->id = random_int(0, $this->maxId);
   }
 
@@ -85,14 +85,6 @@ class Game
     }
 
     $this->id = $id;
-  }
-
-  private function generateLines(): void
-  {
-
-    foreach (self::WINNING_MASKS as $mask) {
-      $this->lines[] = new Line($mask);
-    }
   }
 
   private function generateReels(): void
@@ -163,23 +155,11 @@ class Game
 
   }
 
-  public function getMatches(): array
+  public function getMatches(): MatchesDto
   {
     $flatSequence = $this->getScreen(true);
 
-    $winning = [];
-
-    // Check matches
-    foreach ($this->lines as $l => $lValue) {
-      $match = $lValue->match($flatSequence);
-
-      if ($match->isMatch()) {
-        $match->id = $l;
-        $winning[] = $match;
-      }
-    }
-
-    return $winning;
+    return $this->matchChecker->getMatches($flatSequence, self::WINNING_MASKS);
   }
 
 }

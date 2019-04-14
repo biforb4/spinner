@@ -5,6 +5,7 @@ namespace GameModel\Command;
 
 use GameModel\Model\Game;
 use GameModel\Model\Match;
+use GameModel\Model\MatchChecker;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -19,7 +20,7 @@ class SpinAll extends Command
   {
     parent::__construct($name);
 
-    $this->game = new Game();
+    $this->game = new Game(new MatchChecker());
   }
 
   protected function configure(): void
@@ -85,8 +86,8 @@ class SpinAll extends Command
 
     for ($i = $from; $i < $from + $count; $i++) {
       $this->game->setId($i);
-      $matches = $this->game->getMatches();
-      $line = $this->printLine($matches);
+      $matchesDto = $this->game->getMatches();
+      $line = $this->printLine($matchesDto->getMatches());
       if ($line !== '' || $printEmpty) {
         if ($printSequence) {
           $sequence = implode("", $this->game->getScreen(true));
@@ -110,7 +111,7 @@ class SpinAll extends Command
       return $line;
     }
 
-    $symbol1 = $matches[0]->symbol;
+    $symbol1 = $matches[0]->getSymbol();
     $symbol2 = null;
     $s1wins3 = 0;
     $s1wins4 = 0;
@@ -121,21 +122,21 @@ class SpinAll extends Command
 
 
     foreach ($matches as $match) {
-      if (!isset($this->stats[$match->symbol][$match->count])) {
-        $this->stats[$match->symbol][$match->count] = 0;
+      if (!isset($this->stats[$match->getSymbol()][$match->getCount()])) {
+        $this->stats[$match->getSymbol()][$match->getCount()] = 0;
       }
-      $this->stats[$match->symbol][$match->count]++;
+      $this->stats[$match->getSymbol()][$match->getCount()]++;
 
-      if ($match->symbol === $symbol1) {
+      if ($match->getSymbol() === $symbol1) {
         // Get variable name that we're modifying.
-        $var = "s1wins{$match->count}";
+        $var = "s1wins{$match->getCount()}";
         ${$var}++;
       } else {
         // There can be only one two winning symbols, wo we can safely overwrite it.
         // Note: this is true only with our assumptions as for the reels setup.
-        $symbol2 = $match->symbol;
+        $symbol2 = $match->getSymbol();
         // Get variable name that we're modifying.
-        $var = "s2wins{$match->count}";
+        $var = "s2wins{$match->getCount()}";
         ${$var}++;
       }
     }

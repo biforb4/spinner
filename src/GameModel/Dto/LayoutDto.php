@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace GameModel\Model;
+namespace GameModel\Dto;
 
 
 class LayoutDto

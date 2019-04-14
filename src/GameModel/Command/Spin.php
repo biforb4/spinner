@@ -5,6 +5,7 @@ namespace GameModel\Command;
 
 use GameModel\Model\Game;
 use GameModel\Model\Match;
+use GameModel\Model\MatchChecker;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,7 +19,7 @@ class Spin extends Command
   {
     parent::__construct($name);
 
-    $this->game = new Game();
+    $this->game = new Game(new MatchChecker());
   }
 
   protected function configure(): void
@@ -53,8 +54,8 @@ class Spin extends Command
     $this->printScreen($output, $screen);
 
 
-    $matches = $this->game->getMatches();
-    $this->printMatches($output, $matches);
+    $matchesDto = $this->game->getMatches();
+    $this->printMatches($output, $matchesDto->getMatches());
 
   }
 
@@ -75,7 +76,7 @@ class Spin extends Command
      * @var Match[] $matches
      */
     foreach ($matches as $match) {
-      $output->writeln(sprintf("%s:%s:%d:%s ", $match->id, $match->symbol, $match->count, $match->direction));
+      $output->writeln(sprintf("%s:%s:%d:%s ", $match->getMaskId(), $match->getSymbol(), $match->getCount(), $match->getDirection()));
     }
   }
 }

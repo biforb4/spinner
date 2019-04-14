@@ -5,42 +5,41 @@ namespace GameModel\Model;
 
 class Match
 {
-  public $symbol;
-  public $count = 0;
-  public $id;
-  public $direction;
+  public const DIRECTION_LEFT = 'l';
+  public const DIRECTION_RIGHT = 'r';
 
-  public const Left = "l";
-  public const Right = "r";
+  private $symbol;
+  private $count;
+  private $maskId;
+  private $direction;
 
-  public static function CreateLeft(): Match
+  public function __construct(string $symbol, int $count, int $gameId, string $direction)
   {
-    $match = new self();
-    $match->direction = self::Left;
-    return $match;
+    $this->symbol = $symbol;
+    $this->count = $count;
+    $this->maskId = $gameId;
+    $this->direction = $direction;
   }
 
-  public static function CreateRight(): Match
+  public function getSymbol(): string
   {
-    $match = new self();
-    $match->direction = self::Right;
-    return $match;
+    return $this->symbol;
   }
 
-  public function isMatch(): bool
+  public function getCount(): int
   {
-    return ($this->symbol !== null && $this->count > 0);
+    return $this->count;
   }
 
-  public function reset(): void
+  public function getMaskId(): int
   {
-    $this->symbol = null;
-    $this->count = 0;
-    $this->direction = null;
+    return $this->maskId;
   }
 
-  public function isGreater(Match $match): bool
+  public function getDirection(): string
   {
-    return $this->count > $match->count;
+    return $this->direction;
   }
+
+
 }
