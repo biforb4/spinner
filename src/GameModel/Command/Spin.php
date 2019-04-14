@@ -43,17 +43,17 @@ class Spin extends Command
   {
     $id = $input->getOption("sequence-id");
 
-    if ($id === null) {
-      $id = $this->game->spin();
+    if ($id !== null) {
+      $this->game->setId($id);
     }
 
-    $baseId = $this->game->toBaseLength($id);
+    $baseId = $this->game->convertIdToBaseLength();
     $output->writeln("$id => $baseId");
-    $screen = $this->game->getScreen($id);
+    $screen = $this->game->getScreen();
     $this->printScreen($output, $screen);
 
 
-    $matches = $this->game->getMatches($id);
+    $matches = $this->game->getMatches();
     $this->printMatches($output, $matches);
 
   }

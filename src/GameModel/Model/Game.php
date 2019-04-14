@@ -60,8 +60,8 @@ class Game
    * @var Line[]
    */
   private $lines = [];
-
   private $maxId;
+  private $id;
 
   public function __construct()
   {
@@ -75,6 +75,16 @@ class Game
 
     $this->generateReels();
     $this->generateLines();
+    $this->id = random_int(0, $this->maxId);
+  }
+
+  public function setId(int $id): void
+  {
+    if ($id < 0 || $id > $this->maxId) {
+      throw new \InvalidArgumentException('id must be between 0 and ' . $this->maxId);
+    }
+
+    $this->id = $id;
   }
 
   private function generateLines(): void
@@ -102,26 +112,22 @@ class Game
     return $this->maxId;
   }
 
-  public function spin(): int
+  public function convertIdToBaseLength(): string
   {
-    return random_int(0, $this->maxId);
-  }
 
-  public function toBaseLength(int $id): string
-  {
     // Convert the sequence id to base 21 number (assuming we have 21 symbols in the reel).
     // This is expressed by $reelLength.
     // The result will be a string where each letter represents position of each reel.
-    $map = base_convert($id, 10, self::REEL_LENGTH);
+    $map = base_convert($this->id, 10, self::REEL_LENGTH);
     // Pad the result with zeros to always have a full length number.
     $map = str_pad($map, self::REEL_COUNT, "0", STR_PAD_LEFT);
 
     return $map;
   }
 
-  private function generateLayout(int $id): Generator
+  private function generateLayout(): Generator
   {
-    $mapBase = $this->toBaseLength($id);
+    $mapBase = $this->convertIdToBaseLength();
 
     $map = [];
 
@@ -139,12 +145,12 @@ class Game
     }
   }
 
-  public function getScreen(int $id, bool $flat = false): array
+  public function getScreen(bool $flat = false): array
   {
     $screen = [];
 
     /** @var LayoutDto $layoutDto */
-    foreach ($this->generateLayout($id) as $layoutDto) {
+    foreach ($this->generateLayout() as $layoutDto) {
       $reel = $layoutDto->getReel();
       $screen[$layoutDto->getRow()][$reel] = $this->reels[$reel][$layoutDto->getPosition()];
     }
@@ -157,9 +163,9 @@ class Game
 
   }
 
-  public function getMatches(int $id): array
+  public function getMatches(): array
   {
-    $flatSequence = $this->getScreen($id, true);
+    $flatSequence = $this->getScreen(true);
 
     $winning = [];
 

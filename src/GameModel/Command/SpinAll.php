@@ -84,11 +84,12 @@ class SpinAll extends Command
     }
 
     for ($i = $from; $i < $from + $count; $i++) {
-      $matches = $this->game->getMatches($i);
+      $this->game->setId($i);
+      $matches = $this->game->getMatches();
       $line = $this->printLine($matches);
       if ($line !== '' || $printEmpty) {
         if ($printSequence) {
-          $sequence = implode("", $this->game->getScreen($i, true));
+          $sequence = implode("", $this->game->getScreen(true));
           $output->writeln("$i, $sequence, $line");
         } else {
           $output->writeln("$i, $line");
