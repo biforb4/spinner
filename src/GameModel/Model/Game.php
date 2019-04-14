@@ -3,6 +3,8 @@
 namespace GameModel\Model;
 
 
+use Generator;
+
 class Game
 {
   // It will work only if we have 5 reels and 3 rows!
@@ -117,7 +119,7 @@ class Game
     return $map;
   }
 
-  public function getLayout(int $id): array
+  private function generateLayout(int $id): Generator
   {
     $mapBase = $this->toBaseLength($id);
 
@@ -128,21 +130,23 @@ class Game
       $map[$r] = base_convert($mapBase[$r], self::REEL_LENGTH, 10);
     }
 
-    return $map;
+    for ($row = 0; $row < self::ROWS; $row++) {
+      for ($reel = 0; $reel < self::REEL_COUNT; $reel++) {
+        $position = ($map[$reel] + $row) % self::REEL_LENGTH;
+
+        yield new LayoutDto($row, $reel, $position);
+      }
+    }
   }
 
   public function getScreen(int $id): array
   {
-
     $screen = [];
-    $layout = $this->getLayout($id);
 
-    for ($row = 0; $row < self::ROWS; $row++) {
-      for ($reel = 0; $reel < self::REEL_COUNT; $reel++) {
-        // Make sure we won't try to print symbols out of range
-        $position = ($layout[$reel] + $row) % self::REEL_LENGTH;
-        $screen[$row][$reel] = $this->reels[$reel][$position];
-      }
+    /** @var LayoutDto $layoutDto */
+    foreach ($this->generateLayout($id) as $layoutDto) {
+      $reel = $layoutDto->getReel();
+      $screen[$layoutDto->getRow()][$reel] = $this->reels[$reel][$layoutDto->getPosition()];
     }
 
     return $screen;
@@ -157,16 +161,10 @@ class Game
    */
   public function flatten(int $id): array
   {
-
     $flat = [];
-    $layout = $this->getLayout($id);
-
-    for ($row = 0; $row < self::ROWS; $row++) {
-      for ($reel = 0; $reel < self::REEL_COUNT; $reel++) {
-        // Make sure we won't try to print symbols out of range
-        $position = ($layout[$reel] + $row) % self::REEL_LENGTH;
-        $flat[] = $this->reels[$reel][$position];
-      }
+    /** @var LayoutDto $layoutDto */
+    foreach($this->generateLayout($id) as $layoutDto) {
+      $flat[] = $this->reels[$layoutDto->getReel()][$layoutDto->getPosition()];
     }
 
     return $flat;
