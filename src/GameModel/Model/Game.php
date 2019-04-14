@@ -139,7 +139,7 @@ class Game
     }
   }
 
-  public function getScreen(int $id): array
+  public function getScreen(int $id, bool $flat = false): array
   {
     $screen = [];
 
@@ -149,30 +149,17 @@ class Game
       $screen[$layoutDto->getRow()][$reel] = $this->reels[$reel][$layoutDto->getPosition()];
     }
 
+    if ($flat === true) {
+      $screen = array_merge(...$screen);
+    }
+
     return $screen;
 
   }
 
-  /**
-   * Convert two dimensional layout to flat array for easier matching with winning masks.
-   *
-   * @param int $id ID of the sequence to flatten
-   * @return array
-   */
-  public function flatten(int $id): array
-  {
-    $flat = [];
-    /** @var LayoutDto $layoutDto */
-    foreach($this->generateLayout($id) as $layoutDto) {
-      $flat[] = $this->reels[$layoutDto->getReel()][$layoutDto->getPosition()];
-    }
-
-    return $flat;
-  }
-
   public function getMatches(int $id): array
   {
-    $flatSequence = $this->flatten($id);
+    $flatSequence = $this->getScreen($id, true);
 
     $winning = [];
 

@@ -88,7 +88,7 @@ class SpinAll extends Command
       $line = $this->printLine($matches);
       if ($line !== '' || $printEmpty) {
         if ($printSequence) {
-          $sequence = implode("", $this->game->flatten($i));
+          $sequence = implode("", $this->game->getScreen($i, true));
           $output->writeln("$i, $sequence, $line");
         } else {
           $output->writeln("$i, $line");
