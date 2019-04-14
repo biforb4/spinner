@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+// application.php
+
+//ini_set("openssl.cafile", "/usr/local/ssl/cert.pem");
+
+
+require __DIR__.'/../vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+
+// ... register commands
+$application->add(new \GameModel\Command\Spin());
+$application->add(new \GameModel\Command\SpinAll());
+
+$application->run();

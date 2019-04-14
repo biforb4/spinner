@@ -1,0 +1,23 @@
+{
+  "name": "genesis/spinner",
+  "description": "Slot game model tool",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Filip Berlikowski",
+      "email": "filip.berlikowski@gmail.com"
+    }
+  ],
+  "require": {
+    "symfony/console": "v4.1.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "": "src"
+    }
+  },
+  "require-dev": {
+    "symfony/var-dumper": "^4.1"
+  }
+}
