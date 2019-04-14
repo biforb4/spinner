@@ -147,25 +147,4 @@ class SpinAll extends Command
 
     return $line;
   }
-
-  protected function printScreen(OutputInterface $output, array $screen): void
-  {
-    foreach ($screen as $rowValue) {
-      foreach ($rowValue as $reelValue) {
-        $output->write($reelValue);
-        $output->write(" ");
-      }
-      $output->writeln("");
-    }
-  }
-
-  protected function printMatches(OutputInterface $output, array $matches): void
-  {
-    /**
-     * @var Match[] $matches
-     */
-    foreach ($matches as $match) {
-      $output->writeln(sprintf("%s:%s:%d:%s ", $match->id, $match->symbol, $match->count, $match->direction));
-    }
-  }
 }

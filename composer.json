@@ -17,7 +17,13 @@
       "": "src"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests": "tests/"
+    }
+  },
   "require-dev": {
-    "symfony/var-dumper": "^4.1"
+    "symfony/var-dumper": "^4.1",
+    "phpunit/phpunit": "^8"
   }
 }
