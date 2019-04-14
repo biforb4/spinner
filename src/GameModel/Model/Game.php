@@ -22,8 +22,8 @@ class Game
   {
     $ranges = [];
 
-    for($i = 0; $i < $this->reelCount; $i++){
-      $ranges[$i] = pow($this->reelLength, $i + 1);
+    for ($i = 0; $i < $this->reelCount; $i++) {
+      $ranges[$i] = $this->reelLength ** ($i + 1);
     }
 
     $this->ranges = $ranges;
@@ -33,49 +33,50 @@ class Game
     $this->generateLines();
   }
 
-  protected function generateLines():void {
+  protected function generateLines(): void
+  {
     // Winning masks.
     // Warning this is hardcoded for now!!!
     // It will work only if we have 5 reels and 3 rows!
     // Order of items is important as it represents the winning sequence!
     $winningMasks = [
-      [  5,  6,  7,  8,  9 ],
+      [5, 6, 7, 8, 9],
       // *****
       // -----
       // *****
-      [  0,  1,  2,  3,  4 ],
+      [0, 1, 2, 3, 4],
       // -----
       // *****
       // *****
-      [ 10, 11, 12, 13, 14 ],
+      [10, 11, 12, 13, 14],
       // *****
       // *****
       // -----
-      [  0,  6, 12,  8,  4 ],
+      [0, 6, 12, 8, 4],
       // \***/
       // *\*/*
       // **V**
-      [  9,  6,  2,  8, 14 ],
+      [9, 6, 2, 8, 14],
       // **A**
       // */*\*
       // /***\
-      [  0,  1,  7,  3,  4 ],
+      [0, 1, 7, 3, 4],
       // --*--
       // **V**
       // *****
-      [ 10, 11,  7, 13, 14 ],
+      [10, 11, 7, 13, 14],
       // *****
       // **A**
       // --*--
-      [  5, 11, 12, 13,  9 ],
+      [5, 11, 12, 13, 9],
       // *****
       // \***/
       // *\-/*
-      [  5,  1,  2,  3,  9 ],
+      [5, 1, 2, 3, 9],
       // */-\*
       // /***\
       // *****
-      [  5,  1,  7,  3,  9 ],
+      [5, 1, 7, 3, 9],
       // *A*A*
       // /*V*\
       // *****
@@ -86,7 +87,8 @@ class Game
     }
   }
 
-  protected function generateReels():void {
+  protected function generateReels(): void
+  {
     $reels = [];
     for ($i = 0; $i < $this->reelCount; $i++) {
       for ($r = 0; $r < 21; $r++) {
@@ -97,15 +99,18 @@ class Game
     $this->reels = $reels;
   }
 
-  public function getMax():int {
+  public function getMax(): int
+  {
     return $this->maxId;
   }
 
-  public function spin():int {
-    return rand(0, $this->maxId);
+  public function spin(): int
+  {
+    return random_int(0, $this->maxId);
   }
 
-  public function toBaseLength(int $id): string {
+  public function toBaseLength(int $id): string
+  {
     // Convert the sequence id to base 21 number (assuming we have 21 symbols in the reel).
     // This is expressed by $reelLength.
     // The result will be a string where each letter represents position of each reel.
@@ -116,20 +121,22 @@ class Game
     return $map;
   }
 
-  public function getLayout(int $id) : array {
+  public function getLayout(int $id): array
+  {
     $mapBase = $this->toBaseLength($id);
 
     $map = [];
 
     // Get positions of each reel.
-    for($r = 0; $r < strlen($mapBase); $r++) {
+    for ($r = 0, $rMax = strlen($mapBase); $r < $rMax; $r++) {
       $map[$r] = base_convert($mapBase[$r], $this->reelLength, 10);
     }
 
     return $map;
   }
 
-  public function getScreen(int $id) : array {
+  public function getScreen(int $id): array
+  {
 
     $screen = [];
     $layout = $this->getLayout($id);
@@ -152,7 +159,8 @@ class Game
    * @param int $id ID of the sequence to flatten
    * @return array
    */
-  public function flatten(int $id) {
+  public function flatten(int $id): array
+  {
 
     $flat = [];
     $layout = $this->getLayout($id);
@@ -169,14 +177,15 @@ class Game
     return $flat;
   }
 
-  public function getMatches($id) {
+  public function getMatches(int $id): array
+  {
     $flatSequence = $this->flatten($id);
 
     $winning = [];
 
     // Check matches
-    for ($l = 0; $l < count($this->lines); $l++) {
-      $match = $this->lines[$l]->match($flatSequence);
+    foreach ($this->lines as $l => $lValue) {
+      $match = $lValue->match($flatSequence);
 
       if ($match->isMatch()) {
         $match->id = $l;

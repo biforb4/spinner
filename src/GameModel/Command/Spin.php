@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Spin extends Command
 {
-  private $game = null;
+  private $game;
 
   public function __construct($name = null)
   {
@@ -21,7 +21,7 @@ class Spin extends Command
     $this->game = new Game();
   }
 
-  protected function configure()
+  protected function configure(): void
   {
     $this
       ->setName("game:spin")
@@ -34,8 +34,7 @@ class Spin extends Command
         'sequence-id',
         's',
         InputOption::VALUE_OPTIONAL,
-        "Uses provided sequence ID (omits randomisation).",
-        null
+        "Uses provided sequence ID (omits randomisation)."
       );
 
   }
@@ -59,17 +58,19 @@ class Spin extends Command
 
   }
 
-  protected function printScreen(OutputInterface $output, array $screen) {
-    for ($row = 0; $row < count($screen); $row++) {
-      for ($reel = 0; $reel < count($screen[$row]); $reel++) {
-        $output->write($screen[$row][$reel], false);
-        $output->write(" ", false);
+  protected function printScreen(OutputInterface $output, array $screen): void
+  {
+    foreach ($screen as $rowValue) {
+      foreach ($rowValue as $reelValue) {
+        $output->write($reelValue);
+        $output->write(" ");
       }
       $output->writeln("");
     }
   }
 
-  protected function printMatches(OutputInterface $output, array $matches) {
+  protected function printMatches(OutputInterface $output, array $matches): void
+  {
     /**
      * @var Match[] $matches
      */

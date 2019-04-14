@@ -1,39 +1,46 @@
 <?php
+
 namespace GameModel\Model;
 
 
-class Match {
-  public $symbol = null;
+class Match
+{
+  public $symbol;
   public $count = 0;
-  public $id = null;
-  public $direction = null;
+  public $id;
+  public $direction;
 
   public const Left = "l";
   public const Right = "r";
 
-  public static function CreateLeft() {
+  public static function CreateLeft(): Match
+  {
     $match = new self();
-    $match->direction = Match::Left;
+    $match->direction = self::Left;
     return $match;
   }
 
-  public static function CreateRight() {
+  public static function CreateRight(): Match
+  {
     $match = new self();
-    $match->direction = Match::Right;
+    $match->direction = self::Right;
     return $match;
   }
 
-  public function isMatch():bool {
-    return ($this->symbol != null && $this->count > 0);
+  public function isMatch(): bool
+  {
+    return ($this->symbol !== null && $this->count > 0);
   }
 
-  public function reset():void {
+  public function reset(): void
+  {
     $this->symbol = null;
     $this->count = 0;
     $this->direction = null;
   }
 
-  public function isGreater(Match $match) :bool {
+  public function isGreater(Match $match): bool
+  {
     return $this->count > $match->count;
   }
 }

@@ -19,7 +19,7 @@ class Line
    *                            for example: A A A A B A A A B B A A B B C
    * @return Match
    */
-  public function match(array $flatSequence)
+  public function match(array $flatSequence): Match
   {
     $lMatch = Match::CreateLeft();
     $rMatch = Match::CreateRight();
@@ -29,12 +29,12 @@ class Line
     $lMatch->count = 1;
 
     // Start from second symbol, as first will always checkMatch.
-    for ($i = 1; $i < count($this->mask); $i++){
-      if ($flatSequence[$this->mask[$i]] != $lMatch->symbol) {
+    for ($i = 1, $iMax = count($this->mask); $i < $iMax; $i++){
+      if ($flatSequence[$this->mask[$i]] !== $lMatch->symbol) {
         break;
-      } else {
-        $lMatch->count++;
       }
+
+      $lMatch->count++;
     }
 
     if ($lMatch->count < 3) {
@@ -47,11 +47,11 @@ class Line
 
     // Start from second symbol, as first will always checkMatch.
     for ($i = count($this->mask) - 2; $i >= 0; $i--){
-      if ($flatSequence[$this->mask[$i]] != $rMatch->symbol) {
+      if ($flatSequence[$this->mask[$i]] !== $rMatch->symbol) {
         break;
-      } else {
-        $rMatch->count++;
       }
+
+      $rMatch->count++;
     }
 
     if ($rMatch->count < 3) {

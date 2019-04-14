@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SpinAll extends Command
 {
-  protected $game = null;
+  protected $game;
   protected $stats = [];
 
   public function __construct(?string $name = null)
@@ -22,13 +22,12 @@ class SpinAll extends Command
     $this->game = new Game();
   }
 
-  protected function configure()
+  protected function configure(): void
   {
     $this
       ->setName("game:spin-all")
       ->setDescription("Spin slot game.")
-      ->setHelp("This command generates random game result...")
-    ;
+      ->setHelp("This command generates random game result...");
 
     $this
       ->addOption(
@@ -53,8 +52,7 @@ class SpinAll extends Command
         'print-empty',
         'e',
         InputOption::VALUE_OPTIONAL,
-        "Print empty lines. Otherwise just skip them.",
-        null
+        "Print empty lines. Otherwise just skip them."
       );
 
     $this
@@ -72,11 +70,11 @@ class SpinAll extends Command
   {
     $from = $input->getOption("from");
     $count = $input->getOption("count");
-    $printEmpty = $input->getOption("print-empty") != false;
-    $printSequence = $input->getOption("print-sequence") != false;
+    $printEmpty = $input->getOption("print-empty") !== false;
+    $printSequence = $input->getOption("print-sequence") !== false;
 
     // Number of rows not provided, maximum value.
-    if ($count == 0) {
+    if ($count === 0) {
       $count = $this->game->getMax() + 1;
     }
 
@@ -88,7 +86,7 @@ class SpinAll extends Command
     for ($i = $from; $i < $from + $count; $i++) {
       $matches = $this->game->getMatches($i);
       $line = $this->printLine($matches);
-      if (strlen($line) > 0 || $printEmpty) {
+      if ($line !== '' || $printEmpty) {
         if ($printSequence) {
           $sequence = implode("", $this->game->flatten($i));
           $output->writeln("$i, $sequence, $line");
@@ -97,19 +95,17 @@ class SpinAll extends Command
         }
       }
     }
-
-    //print_r($this->stats);
-
   }
 
-  protected function printLine(array $matches):string {
+  protected function printLine(array $matches): string
+  {
     /**
      * @var Match[] $matches
      */
 
     $line = "";
 
-    if (count($matches) == 0) {
+    if (count($matches) === 0) {
       return $line;
     }
 
@@ -123,13 +119,13 @@ class SpinAll extends Command
     $s2wins5 = 0;
 
 
-    foreach ($matches as $match){
+    foreach ($matches as $match) {
       if (!isset($this->stats[$match->symbol][$match->count])) {
         $this->stats[$match->symbol][$match->count] = 0;
       }
       $this->stats[$match->symbol][$match->count]++;
 
-      if ($match->symbol == $symbol1) {
+      if ($match->symbol === $symbol1) {
         // Get variable name that we're modifying.
         $var = "s1wins{$match->count}";
         ${$var}++;
@@ -152,17 +148,19 @@ class SpinAll extends Command
     return $line;
   }
 
-  protected function printScreen(OutputInterface $output, array $screen): void {
-    for ($row = 0; $row < count($screen); $row++) {
-      for ($reel = 0; $reel < count($screen[$row]); $reel++) {
-        $output->write($screen[$row][$reel], false);
-        $output->write(" ", false);
+  protected function printScreen(OutputInterface $output, array $screen): void
+  {
+    foreach ($screen as $rowValue) {
+      foreach ($rowValue as $reelValue) {
+        $output->write($reelValue);
+        $output->write(" ");
       }
       $output->writeln("");
     }
   }
 
-  protected function printMatches(OutputInterface $output, array $matches): void {
+  protected function printMatches(OutputInterface $output, array $matches): void
+  {
     /**
      * @var Match[] $matches
      */
